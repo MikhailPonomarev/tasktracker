@@ -4,7 +4,7 @@ import com.mp.tasktracker.dao.repository.model.TaskEntity
 import com.mp.tasktracker.domain.Task
 
 fun TaskEntity.toDomain() = Task(
-    id = this.uuid.toString(),
+    id = this.uuid,
     title = this.title,
     description = this.description,
     status = this.status.name,

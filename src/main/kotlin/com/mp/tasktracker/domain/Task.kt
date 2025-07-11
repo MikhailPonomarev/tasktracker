@@ -1,7 +1,9 @@
 package com.mp.tasktracker.domain
 
+import java.util.UUID
+
 data class Task(
-    val id: String?,
+    val id: UUID?,
     val title: String,
     val description: String?,
     val status: String?,

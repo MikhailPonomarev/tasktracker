@@ -4,6 +4,6 @@ import com.mp.tasktracker.dao.repository.model.UserEntity
 import com.mp.tasktracker.domain.User
 
 fun UserEntity.toDomain() = User(
-    id = this.uuid.toString(),
+    id = this.uuid,
     name = this.name
 )
