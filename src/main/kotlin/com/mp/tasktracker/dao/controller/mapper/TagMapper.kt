@@ -4,6 +4,6 @@ import com.mp.tasktracker.dao.controller.model.TagDTO
 import com.mp.tasktracker.domain.Tag
 
 fun Tag.toDTO() = TagDTO(
-    uuid = this.uuid,
+    id = this.id,
     name = this.name
 )

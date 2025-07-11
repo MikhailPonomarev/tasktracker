@@ -15,6 +15,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.slot
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
@@ -36,43 +37,38 @@ class CreateTaskServiceImplTest {
 
     @Test
     fun `execute - should create task`() {
+        //given
         val assigneeStub = UserEntity(name = "assignee")
-
         val observersStub = listOf(UserEntity(name = "observer1"))
-
         val tagsStub = listOf(TagEntity(name = "tag1"))
-
-        val taskStub = TaskEntity(
-            title = "test task",
-            description = "test description",
-            status = TaskStatus.TODO,
-            assignee = assigneeStub,
-            observers = observersStub,
-            tags = tagsStub
-        )
-
         val createTaskDTO = CreateTaskDTO(
             title = "test task",
             description = "test description",
-            assigneeUUID = assigneeStub.uuid.toString(),
-            observersUUIDs = observersStub.map { it.uuid.toString() },
-            tagsUUIDs = tagsStub.map { it.uuid.toString() }
+            assigneeId = assigneeStub.uuid.toString(),
+            observersIds = observersStub.map { it.uuid.toString() },
+            tagsIds = tagsStub.map { it.uuid.toString() }
         )
 
-        every { userRepository.findByUUID(UUID.fromString(createTaskDTO.assigneeUUID)) } returns assigneeStub
+        val taskEntitySlot = slot<TaskEntity>()
+
+        every { userRepository.findByUUID(UUID.fromString(createTaskDTO.assigneeId)) } returns assigneeStub
         every { userRepository.findByUUID(observersStub.first().uuid) } returns observersStub.first()
         every { tagRepository.findByUUID(tagsStub.first().uuid) } returns tagsStub.first()
-        every { taskRepository.save(any()) } returns taskStub
+        every { taskRepository.save(capture(taskEntitySlot)) } returnsArgument 0
 
-        val taskDTO = sut.execute(createTaskDTO)
+        //when
+        sut.execute(createTaskDTO)
 
-        assertSoftly {
-            taskDTO.title shouldBe createTaskDTO.title
-            taskDTO.description shouldBe createTaskDTO.description
-            taskDTO.status shouldBe TaskStatus.TODO.name
-            taskDTO.assignee?.uuid shouldBe createTaskDTO.assigneeUUID
-            taskDTO.observers?.map { it.uuid } shouldBe createTaskDTO.observersUUIDs
-            taskDTO.tags?.map { it.uuid } shouldBe createTaskDTO.tagsUUIDs
+        //then
+        with(taskEntitySlot.captured) {
+            assertSoftly {
+                this.title shouldBe createTaskDTO.title
+                this.description shouldBe createTaskDTO.description
+                this.status.name shouldBe TaskStatus.TODO.name
+                this.assignee?.uuid.toString() shouldBe createTaskDTO.assigneeId
+                this.observers?.map { it.uuid.toString() } shouldBe createTaskDTO.observersIds
+                this.tags?.map { it.uuid.toString() } shouldBe createTaskDTO.tagsIds
+            }
         }
     }
 }

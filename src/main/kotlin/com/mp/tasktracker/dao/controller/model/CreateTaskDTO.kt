@@ -4,7 +4,7 @@ data class CreateTaskDTO(
     val title: String,
     val description: String? = null,
     val status: String? = null,
-    val assigneeUUID: String?,
-    val observersUUIDs: List<String>? = null,
-    val tagsUUIDs: List<String>? = null
+    val assigneeId: String?,
+    val observersIds: List<String>? = null,
+    val tagsIds: List<String>? = null
 )

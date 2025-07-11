@@ -4,7 +4,7 @@ import com.mp.tasktracker.dao.controller.model.TaskDTO
 import com.mp.tasktracker.domain.Task
 
 fun Task.toDTO() = TaskDTO(
-    uuid = this.uuid,
+    id = this.id,
     title = this.title,
     description = this.description,
     status = this.status,

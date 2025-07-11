@@ -1,6 +1,6 @@
 package com.mp.tasktracker.domain
 
 data class User(
-    val uuid: String? = null,
+    val id: String? = null,
     val name: String? = null,
 )

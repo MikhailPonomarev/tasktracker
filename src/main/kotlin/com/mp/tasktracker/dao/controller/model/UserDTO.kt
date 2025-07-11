@@ -1,6 +1,6 @@
 package com.mp.tasktracker.dao.controller.model
 
 data class UserDTO(
-    val uuid: String?,
+    val id: String?,
     val name: String?
 )

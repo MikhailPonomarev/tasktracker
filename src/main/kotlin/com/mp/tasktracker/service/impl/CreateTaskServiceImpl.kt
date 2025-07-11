@@ -24,20 +24,20 @@ class CreateTaskServiceImpl(
 ) : CreateTaskService {
 
     override fun execute(createTaskDTO: CreateTaskDTO): TaskDTO {
-        val assignee = createTaskDTO.assigneeUUID?.let { getUser(it) }
+        val assignee = createTaskDTO.assigneeId?.let { getUser(it) }
 
-        val observers = createTaskDTO.observersUUIDs?.let { observersUUIDs ->
+        val observers = createTaskDTO.observersIds?.let { ids ->
             buildList {
-                observersUUIDs.forEach {
+                ids.forEach {
                     val user = getUser(it)
                     add(user)
                 }
             }
         }
 
-        val tags = createTaskDTO.tagsUUIDs?.let { tagsUUIDs ->
+        val tags = createTaskDTO.tagsIds?.let { ids ->
             buildList {
-                tagsUUIDs.forEach {
+                ids.forEach {
                     val tag = tagRepository.findByUUID(UUID.fromString(it))
                         ?: throw TagNotFoundException(it)
 
