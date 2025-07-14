@@ -1,0 +1,198 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2025-07.0" author="MikhailPonomarev">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <not>
+                    <tableExists tableName="user"/>
+                </not>
+                <not>
+                    <tableExists tableName="tag"/>
+                </not>
+                <not>
+                    <tableExists tableName="observer_to_task"/>
+                </not>
+                <not>
+                    <tableExists tableName="tag_to_task"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <createTable tableName="user">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_user_id"
+                />
+            </column>
+
+            <column name="uuid" type="uuid" valueComputed="gen_random_uuid()">
+                <constraints
+                        nullable="false"
+                        unique="true"
+                />
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+
+        <createTable tableName="tag">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_tag_id"
+                />
+            </column>
+
+            <column name="uuid" type="uuid" valueComputed="gen_random_uuid()">
+                <constraints
+                        nullable="false"
+                        unique="true"
+                />
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+
+        <createTable tableName="task">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="pk_task_id"
+                />
+            </column>
+
+            <column name="uuid" type="uuid" valueComputed="gen_random_uuid()">
+                <constraints
+                        nullable="false"
+                        unique="true"
+                />
+            </column>
+
+            <column name="title" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="varchar(5000)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="status" type="varchar(50)" defaultValue="TODO">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="assignee_id" type="bigint">
+                <constraints
+                        nullable="true"
+                        foreignKeyName="fk_assignee_user_id"
+                        referencedTableName="user"
+                        referencedColumnNames="id"
+                />
+            </column>
+
+            <column name="is_deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+
+        <createTable tableName="observer_to_task">
+            <column name="task_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_observer_to_task_task_id"
+                        referencedTableName="task"
+                        referencedColumnNames="id"
+                />
+            </column>
+
+            <column name="user_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_observer_to_task_user_id"
+                        referencedTableName="user"
+                        referencedColumnNames="id"
+                />
+            </column>
+        </createTable>
+
+
+        <addPrimaryKey
+                tableName="observer_to_task"
+                columnNames="task_id, user_id"
+                constraintName="pk_observer_to_task"
+        />
+
+
+        <createTable tableName="tag_to_task">
+            <column name="task_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_tag_to_task_task_id"
+                        referencedTableName="task"
+                        referencedColumnNames="id"
+                />
+            </column>
+
+            <column name="tag_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_tag_to_tag_tag_id"
+                        referencedTableName="tag"
+                        referencedColumnNames="id"
+                />
+            </column>
+        </createTable>
+
+
+        <addPrimaryKey
+                tableName="tag_to_task"
+                columnNames="task_id, tag_id"
+                constraintName="pk_tag_to_task"
+        />
+    </changeSet>
+</databaseChangeLog>
