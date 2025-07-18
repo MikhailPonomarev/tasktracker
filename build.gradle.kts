@@ -72,4 +72,18 @@ tasks.jacocoTestReport {
 		xml.required = true
 		html.required = true
 	}
+
+	classDirectories.setFrom(
+		files(classDirectories.files.map {
+			fileTree(it) {
+				exclude(
+					"com/mp/tasktracker/TaskTrackerApplicationKt.class",
+					"com/mp/tasktracker/TaskTrackerApplication.class",
+					"com/mp/tasktracker/dao/**",
+					"com/mp/tasktracker/domain/**",
+					"com/mp/tasktracker/exception/**"
+				)
+			}
+		})
+	)
 }
