@@ -195,4 +195,8 @@
                 constraintName="pk_tag_to_task"
         />
     </changeSet>
+
+    <changeSet id="2025-07.1" author="MikhailPonomarev">
+        <addUniqueConstraint tableName="tag" columnNames="name"/>
+    </changeSet>
 </databaseChangeLog>

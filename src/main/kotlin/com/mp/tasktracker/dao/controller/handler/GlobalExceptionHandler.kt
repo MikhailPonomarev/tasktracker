@@ -16,8 +16,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<ErrorResponse> {
         logger.error { ex.message }
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(ErrorResponse(ex.message ?: "Unknown error"))
     }
 }
