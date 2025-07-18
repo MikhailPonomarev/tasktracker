@@ -25,16 +25,22 @@ repositories {
 }
 
 dependencies {
+	val kotlinLogginVersion = "7.0.7"
+	val kotestVersion = "5.9.1"
+	val mockkVersion = "1.14.2"
+
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.liquibase:liquibase-core")
+	implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLogginVersion")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
-	testImplementation("io.mockk:mockk:1.14.2")
+	testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
+	testImplementation("io.mockk:mockk:$mockkVersion")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -66,4 +72,18 @@ tasks.jacocoTestReport {
 		xml.required = true
 		html.required = true
 	}
+
+	classDirectories.setFrom(
+		files(classDirectories.files.map {
+			fileTree(it) {
+				exclude(
+					"com/mp/tasktracker/TaskTrackerApplicationKt.class",
+					"com/mp/tasktracker/TaskTrackerApplication.class",
+					"com/mp/tasktracker/dao/**",
+					"com/mp/tasktracker/domain/**",
+					"com/mp/tasktracker/exception/**"
+				)
+			}
+		})
+	)
 }
