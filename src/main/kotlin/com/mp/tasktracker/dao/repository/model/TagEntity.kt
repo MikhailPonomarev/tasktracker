@@ -6,7 +6,7 @@ import jakarta.persistence.Entity
 @Entity(name = "tag")
 open class TagEntity(
     @Column(length = 255, unique = true)
-    val name: String,
+    var name: String,
 ) : BaseEntity() {
 
     override fun equals(other: Any?): Boolean {

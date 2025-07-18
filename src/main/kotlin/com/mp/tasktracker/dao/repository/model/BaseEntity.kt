@@ -17,16 +17,15 @@ abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     var uuid: UUID = UUID.randomUUID()
 
-    val isDeleted: Boolean = false
+    var isDeleted: Boolean = false
 
     @CreationTimestamp
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false)
     lateinit var createdAt: OffsetDateTime
 
     @UpdateTimestamp
-    @Column(nullable = true)
     lateinit var updatedAt: OffsetDateTime
 }

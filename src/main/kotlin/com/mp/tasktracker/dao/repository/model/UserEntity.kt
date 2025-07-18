@@ -6,7 +6,7 @@ import jakarta.persistence.Entity
 @Entity(name = "\"user\"")
 class UserEntity(
     @Column(length = 255)
-    val name: String
+    var name: String
 ) : BaseEntity() {
 
     override fun equals(other: Any?): Boolean {
