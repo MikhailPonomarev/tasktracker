@@ -1,4 +1,4 @@
-package com.mp.tasktracker.test.service.impl
+package com.mp.tasktracker.service.impl
 
 import com.mp.tasktracker.dao.controller.model.CreateTaskDTO
 import com.mp.tasktracker.dao.repository.TagRepository
@@ -8,7 +8,6 @@ import com.mp.tasktracker.dao.repository.model.TagEntity
 import com.mp.tasktracker.dao.repository.model.TaskEntity
 import com.mp.tasktracker.dao.repository.model.UserEntity
 import com.mp.tasktracker.dao.repository.type.TaskStatus
-import com.mp.tasktracker.service.impl.CreateTaskServiceImpl
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -51,9 +50,9 @@ class CreateTaskServiceImplTest {
 
         val taskEntitySlot = slot<TaskEntity>()
 
-        every { userRepository.findByUUID(UUID.fromString(createTaskDTO.assigneeId)) } returns assigneeStub
-        every { userRepository.findByUUID(observersStub.first().uuid) } returns observersStub.first()
-        every { tagRepository.findByUUID(tagsStub.first().uuid) } returns tagsStub.first()
+        every { userRepository.findByUuid(UUID.fromString(createTaskDTO.assigneeId)) } returns assigneeStub
+        every { userRepository.findByUuid(observersStub.first().uuid) } returns observersStub.first()
+        every { tagRepository.findByUuid(tagsStub.first().uuid) } returns tagsStub.first()
         every { taskRepository.save(capture(taskEntitySlot)) } returnsArgument 0
 
         //when
@@ -66,8 +65,8 @@ class CreateTaskServiceImplTest {
                 this.description shouldBe createTaskDTO.description
                 this.status.name shouldBe TaskStatus.TODO.name
                 this.assignee?.uuid.toString() shouldBe createTaskDTO.assigneeId
-                this.observers?.map { it.uuid.toString() } shouldBe createTaskDTO.observersIds
-                this.tags?.map { it.uuid.toString() } shouldBe createTaskDTO.tagsIds
+                this.observers.map { it.uuid.toString() } shouldBe createTaskDTO.observersIds
+                this.tags.map { it.uuid.toString() } shouldBe createTaskDTO.tagsIds
             }
         }
     }

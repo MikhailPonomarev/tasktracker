@@ -9,6 +9,6 @@ fun TaskEntity.toDomain() = Task(
     description = this.description,
     status = this.status.name,
     assignee = this.assignee?.toDomain(),
-    observers = this.observers?.map { it.toDomain() },
-    tags = this.tags?.map { it.toDomain() }
+    observers = this.observers.map { it.toDomain() },
+    tags = this.tags.map { it.toDomain() }
 )

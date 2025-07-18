@@ -1,9 +1,12 @@
 package com.mp.tasktracker.dao.repository
 
 import com.mp.tasktracker.dao.repository.model.UserEntity
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 import java.util.UUID
 
-interface UserRepository {
+@Repository
+interface UserRepository : JpaRepository<UserEntity, Long> {
 
-    fun findByUUID(uuid: UUID): UserEntity?
+    fun findByUuid(uuid: UUID): UserEntity?
 }

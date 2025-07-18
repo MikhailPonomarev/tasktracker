@@ -8,8 +8,8 @@ import com.mp.tasktracker.dao.repository.UserRepository
 import com.mp.tasktracker.dao.repository.mapper.toDomain
 import com.mp.tasktracker.dao.repository.model.TaskEntity
 import com.mp.tasktracker.dao.controller.mapper.toDTO
-import com.mp.tasktracker.dao.repository.model.UserEntity
 import com.mp.tasktracker.dao.repository.type.TaskStatus
+import com.mp.tasktracker.exception.StatusNotFoundException
 import com.mp.tasktracker.exception.TagNotFoundException
 import com.mp.tasktracker.exception.UserNotFoundException
 import com.mp.tasktracker.service.CreateTaskService
@@ -28,27 +28,21 @@ class CreateTaskServiceImpl(
 
         val observers = createTaskDTO.observersIds?.let { ids ->
             buildList {
-                ids.forEach {
-                    val user = getUser(it)
-                    add(user)
-                }
-            }
-        }
+                ids.forEach { add(getUser(it)) }
+            }.toMutableList()
+        } ?: mutableListOf()
 
         val tags = createTaskDTO.tagsIds?.let { ids ->
             buildList {
                 ids.forEach {
-                    val tag = tagRepository.findByUUID(UUID.fromString(it))
-                        ?: throw TagNotFoundException(it)
-
+                    val tag = tagRepository.findByUuid(UUID.fromString(it)) ?: throw TagNotFoundException(it)
                     add(tag)
                 }
-            }
-        }
+            }.toMutableList()
+        } ?: mutableListOf()
 
         val status = createTaskDTO.status?.let { statusName ->
-            TaskStatus.entries.find { it.name == statusName }
-                ?: throw RuntimeException("Status not found by name=${createTaskDTO.status}")
+            TaskStatus.entries.find { it.name == statusName } ?: throw StatusNotFoundException(statusName)
         } ?: TaskStatus.TODO
 
         val taskEntity = TaskEntity(
@@ -65,6 +59,6 @@ class CreateTaskServiceImpl(
             .toDTO()
     }
 
-    private fun getUser(uuid: String): UserEntity = userRepository.findByUUID(UUID.fromString(uuid))
+    private fun getUser(uuid: String) = userRepository.findByUuid(UUID.fromString(uuid))
         ?: throw UserNotFoundException(uuid)
 }

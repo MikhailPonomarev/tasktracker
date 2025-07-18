@@ -1,15 +1,38 @@
 package com.mp.tasktracker.dao.repository.model
 
 import com.mp.tasktracker.dao.repository.type.TaskStatus
-import java.util.UUID
+import jakarta.persistence.*
 
-data class TaskEntity(
-    val id: Long = 0L,
-    val uuid: UUID = UUID.randomUUID(),
-    val title: String,
-    val description: String?,
-    val status: TaskStatus,
-    val assignee: UserEntity?,
-    val observers: List<UserEntity>?,
-    val tags: List<TagEntity>?
-)
+@Entity(name = "task")
+open class TaskEntity(
+    var title: String,
+    var description: String? = null,
+
+    @Enumerated(EnumType.STRING)
+    var status: TaskStatus,
+
+    @ManyToOne
+    @JoinColumn(name = "assignee_id")
+    var assignee: UserEntity? = null,
+
+    @ManyToMany
+    @JoinTable(
+        name = "observer_to_task",
+        joinColumns = [JoinColumn(name = "task_id")],
+        inverseJoinColumns = [JoinColumn(name = "user_id")]
+    )
+    var observers: MutableList<UserEntity> = mutableListOf(),
+
+    @ManyToMany
+    @JoinTable(
+        name = "tag_to_task",
+        joinColumns = [JoinColumn(name = "task_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+    )
+    var tags: MutableList<TagEntity> = mutableListOf()
+) : BaseEntity() {
+
+    override fun toString(): String {
+        return "TaskEntity(id=$id, title=$title)"
+    }
+}

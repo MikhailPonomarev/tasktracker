@@ -1,10 +1,8 @@
 package com.mp.tasktracker.dao.repository.model
 
-import java.util.UUID
+import jakarta.persistence.Entity
 
-data class UserEntity(
-    val id: Long = 0L,
-    val uuid: UUID = UUID.randomUUID(),
+@Entity(name = "\"user\"")
+class UserEntity(
     val name: String,
-    val isDeleted: Boolean = false
-)
+) : BaseEntity()

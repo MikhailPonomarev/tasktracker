@@ -9,6 +9,6 @@ fun Task.toDTO() = TaskDTO(
     description = this.description,
     status = this.status,
     assignee = this.assignee?.toDTO(),
-    observers = this.observers?.map { it.toDTO() },
-    tags = this.tags?.map { it.toDTO() }
+    observers = this.observers?.takeIf { it.isNotEmpty() }?.map { it.toDTO() },
+    tags = this.tags?.takeIf { it.isNotEmpty() }?.map { it.toDTO() }
 )
