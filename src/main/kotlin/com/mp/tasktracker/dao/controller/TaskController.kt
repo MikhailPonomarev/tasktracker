@@ -1,12 +1,10 @@
 package com.mp.tasktracker.dao.controller
 
 import com.mp.tasktracker.dao.controller.model.CreateTaskDTO
+import com.mp.tasktracker.dao.controller.model.DefaultResponseDTO
 import com.mp.tasktracker.dao.controller.model.TaskDTO
 import com.mp.tasktracker.dao.controller.model.UpdateTaskDTO
-import com.mp.tasktracker.service.task.CreateTaskService
-import com.mp.tasktracker.service.task.GetAllTasksService
-import com.mp.tasktracker.service.task.GetTaskByUUIDService
-import com.mp.tasktracker.service.task.UpdateTaskService
+import com.mp.tasktracker.service.task.*
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -17,7 +15,8 @@ class TaskController(
     private val createTaskService: CreateTaskService,
     private val getTaskByUUIDService: GetTaskByUUIDService,
     private val getAllTasksService: GetAllTasksService,
-    private val updateTaskService: UpdateTaskService
+    private val updateTaskService: UpdateTaskService,
+    private val deleteTaskByUuidService: DeleteTaskByUuidService
 ) {
 
     @PostMapping
@@ -37,8 +36,9 @@ class TaskController(
         @PathVariable uuid: String,
         @Valid @RequestBody dto: UpdateTaskDTO
     ): ResponseEntity<TaskDTO> = ResponseEntity.ok(updateTaskService.execute(uuid, dto))
+
+    @DeleteMapping("/{uuid}")
+    fun deleteTask(@PathVariable uuid: String): DefaultResponseDTO =
+        deleteTaskByUuidService.execute(uuid)
+            .let { DefaultResponseDTO("Task with uuid=$uuid deleted successfully") }
 }
-//
-//    @DeleteMapping("/{uuid}")
-//    fun deleteTask(@PathVariable uuid: String)
-//}
