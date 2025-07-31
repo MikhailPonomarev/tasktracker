@@ -1,9 +1,9 @@
-package com.mp.tasktracker.service
+package com.mp.tasktracker.service.task
 
 import com.mp.tasktracker.dao.controller.model.CreateTaskDTO
 import com.mp.tasktracker.dao.controller.model.TaskDTO
 
 interface CreateTaskService {
 
-    fun execute(createTaskDTO: CreateTaskDTO): TaskDTO
+    fun execute(dto: CreateTaskDTO): TaskDTO
 }

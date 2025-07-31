@@ -1,4 +1,4 @@
-package com.mp.tasktracker.service.impl
+package com.mp.tasktracker.service.task.impl
 
 import com.mp.tasktracker.dao.controller.model.CreateTaskDTO
 import com.mp.tasktracker.dao.controller.model.TaskDTO
@@ -9,10 +9,10 @@ import com.mp.tasktracker.dao.repository.mapper.toDomain
 import com.mp.tasktracker.dao.repository.model.TaskEntity
 import com.mp.tasktracker.dao.controller.mapper.toDTO
 import com.mp.tasktracker.dao.repository.type.TaskStatus
-import com.mp.tasktracker.exception.StatusNotFoundException
 import com.mp.tasktracker.exception.TagNotFoundException
 import com.mp.tasktracker.exception.UserNotFoundException
-import com.mp.tasktracker.service.CreateTaskService
+import com.mp.tasktracker.service.task.CreateTaskService
+import com.mp.tasktracker.util.TaskStatusUtil
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -23,16 +23,16 @@ class CreateTaskServiceImpl(
     private val taskRepository: TaskRepository
 ) : CreateTaskService {
 
-    override fun execute(createTaskDTO: CreateTaskDTO): TaskDTO {
-        val assignee = createTaskDTO.assigneeId?.let { getUser(it) }
+    override fun execute(dto: CreateTaskDTO): TaskDTO {
+        val assignee = dto.assigneeId?.let { findUserOrThrow(it) }
 
-        val observers = createTaskDTO.observersIds?.let { ids ->
+        val observers = dto.observersIds?.let { ids ->
             buildList {
-                ids.forEach { add(getUser(it)) }
+                ids.forEach { add(findUserOrThrow(it)) }
             }.toMutableList()
         } ?: mutableListOf()
 
-        val tags = createTaskDTO.tagsIds?.let { ids ->
+        val tags = dto.tagsIds?.let { ids ->
             buildList {
                 ids.forEach {
                     val tag = tagRepository.findByUuid(UUID.fromString(it)) ?: throw TagNotFoundException(it)
@@ -41,13 +41,11 @@ class CreateTaskServiceImpl(
             }.toMutableList()
         } ?: mutableListOf()
 
-        val status = createTaskDTO.status?.let { statusName ->
-            TaskStatus.entries.find { it.name == statusName } ?: throw StatusNotFoundException(statusName)
-        } ?: TaskStatus.TODO
+        val status = dto.status?.let { TaskStatusUtil.findStatusOrThrow(it) } ?: TaskStatus.TODO
 
         val taskEntity = TaskEntity(
-            title = createTaskDTO.title,
-            description = createTaskDTO.description,
+            title = dto.title,
+            description = dto.description,
             status = status,
             assignee = assignee,
             observers = observers,
@@ -59,6 +57,6 @@ class CreateTaskServiceImpl(
             .toDTO()
     }
 
-    private fun getUser(uuid: String) = userRepository.findByUuid(UUID.fromString(uuid))
+    private fun findUserOrThrow(uuid: String) = userRepository.findByUuid(UUID.fromString(uuid))
         ?: throw UserNotFoundException(uuid)
 }
