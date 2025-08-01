@@ -15,6 +15,7 @@ class TaskController(
     private val createTaskService: CreateTaskService,
     private val getTaskByUUIDService: GetTaskByUUIDService,
     private val getAllTasksService: GetAllTasksService,
+    private val getTasksByStatusService: GetTasksByStatusService,
     private val updateTaskService: UpdateTaskService,
     private val deleteTaskByUuidService: DeleteTaskByUuidService
 ) {
@@ -28,8 +29,10 @@ class TaskController(
         ResponseEntity.ok(getTaskByUUIDService.execute(uuid))
 
     @GetMapping
-    fun getAllNotDeletedTasks(): ResponseEntity<List<TaskDTO>> =
-        ResponseEntity.ok(getAllTasksService.execute())
+    fun getTasks(@RequestParam(required = false) status: String?): ResponseEntity<List<TaskDTO>> =
+        ResponseEntity.ok(
+            status?.let { getTasksByStatusService.execute(it) } ?: getAllTasksService.execute()
+        )
 
     @PutMapping("/{uuid}")
     fun updateTask(
@@ -38,7 +41,8 @@ class TaskController(
     ): ResponseEntity<TaskDTO> = ResponseEntity.ok(updateTaskService.execute(uuid, dto))
 
     @DeleteMapping("/{uuid}")
-    fun deleteTask(@PathVariable uuid: String): DefaultResponseDTO =
+    fun deleteTask(@PathVariable uuid: String): ResponseEntity<DefaultResponseDTO> {
         deleteTaskByUuidService.execute(uuid)
-            .let { DefaultResponseDTO("Task with uuid=$uuid deleted successfully") }
+        return ResponseEntity.ok(DefaultResponseDTO("Task with uuid=$uuid deleted successfully"))
+    }
 }
