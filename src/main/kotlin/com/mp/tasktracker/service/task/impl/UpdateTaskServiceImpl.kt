@@ -53,8 +53,8 @@ class UpdateTaskServiceImpl(
             observers = newObservers
             tags = newTags
         }.run {
-            taskRepository.save(this)
-            this.toDomain().toDTO()
+            val task = taskRepository.save(this)
+            task.toDomain().toDTO()
         }
     }
 
