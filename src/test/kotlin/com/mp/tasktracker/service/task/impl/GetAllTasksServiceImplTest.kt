@@ -1,4 +1,4 @@
-package com.mp.tasktracker.service.impl
+package com.mp.tasktracker.service.task.impl
 
 import com.mp.tasktracker.dao.repository.TaskRepository
 import com.mp.tasktracker.dao.repository.model.TaskEntity

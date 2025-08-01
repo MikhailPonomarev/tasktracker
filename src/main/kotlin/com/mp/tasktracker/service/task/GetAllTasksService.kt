@@ -1,4 +1,4 @@
-package com.mp.tasktracker.service
+package com.mp.tasktracker.service.task
 
 import com.mp.tasktracker.dao.controller.model.TaskDTO
 

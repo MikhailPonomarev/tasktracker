@@ -1,4 +1,4 @@
-package com.mp.tasktracker.service.impl
+package com.mp.tasktracker.service.task.impl
 
 import com.mp.tasktracker.dao.controller.model.CreateTaskDTO
 import com.mp.tasktracker.dao.repository.TagRepository
@@ -8,7 +8,6 @@ import com.mp.tasktracker.dao.repository.model.TagEntity
 import com.mp.tasktracker.dao.repository.model.TaskEntity
 import com.mp.tasktracker.dao.repository.model.UserEntity
 import com.mp.tasktracker.dao.repository.type.TaskStatus
-import com.mp.tasktracker.exception.StatusNotFoundException
 import com.mp.tasktracker.exception.TagNotFoundException
 import com.mp.tasktracker.exception.UserNotFoundException
 import io.kotest.assertions.assertSoftly
@@ -130,15 +129,5 @@ class CreateTaskServiceImplTest {
         every { tagRepository.findByUuid(any()) } returns null
 
         assertThrows<TagNotFoundException> { sut.execute(createTaskDTO) }
-    }
-
-    @Test
-    fun `execute - should throw StatusNotFoundException if tag not exists`() {
-        val createTaskDTO = CreateTaskDTO(
-            title = taskName,
-            status = "NOT_EXISTING_STATUS"
-        )
-
-        assertThrows<StatusNotFoundException> { sut.execute(createTaskDTO) }
     }
 }

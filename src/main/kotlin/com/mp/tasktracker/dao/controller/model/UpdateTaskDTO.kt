@@ -3,7 +3,7 @@ package com.mp.tasktracker.dao.controller.model
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
 
-data class CreateTaskDTO(
+data class UpdateTaskDTO(
     @field:NotEmpty(message = "Название не может быть пустым")
     @field:Size(max = 500, message = "Название не может быть больше 500 символов")
     val title: String,
